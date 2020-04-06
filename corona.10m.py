@@ -95,4 +95,9 @@ def get_main_table(url):
 table = get_main_table('https://www.worldometers.info/coronavirus/')
 np_table = table.values
 
-print ('%s %s'%(np_table[0][0],np_table[0][1]))
+print ("\033[32;1m C-19\n")
+print ("---")
+print ('%s \t %s'%(np_table[0][0],np_table[0][1]))
+print ("---")
+for i in range(1,11):
+	print ('%s \t %s'%(np_table[i][0],np_table[i][1]))
