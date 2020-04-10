@@ -117,7 +117,16 @@ header = df.columns[:4]
 df[header[1]] = df[header[1]].astype(str) # to be able to use next line
 df['sort_column'] = df[header[1]].str.replace(',','', regex=True)
 
-table = df.values
+# Drop rows with "Total:" in the first column
+index_total = df[ df[header[0]] == "Total:" ].index
+df.drop(index_total , inplace = True)
+
+index_empty = df[ df[header[0]] == " " ].index
+df.drop(index_empty , inplace = True)
+
+
+table_continents = df.values[:6]
+table = df.values[7:]
 
 
 
@@ -127,6 +136,8 @@ table = table[:index,:]
 table[:,-1] = table[:,-1].astype(float)
 
 df2 = pd.DataFrame(table)
+df3 = pd.DataFrame(table_continents)
+
 
 # Sorting the table based on the total cases
 table = table[table[:,-1].argsort()][::-1]
@@ -134,14 +145,22 @@ table = table[table[:,-1].argsort()][::-1]
 # Working on the top 10
 lengths = longest_per_column(table[:11,:4],header)
 
+# Target country to track
 
+target_country = 'Colombia'
 
-print ("\u001b[1m C-19\n") #http://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
+ind_target = np.where(table[:,0] == target_country)[0][0]
+
+print ("\u001b[1m C-19\n") 
 print("---")
 # Getting the longest string 
-print(f"{header[0]:<{lengths[0]}}\t{header[1]:<{lengths[1]}}\t\t{header[2]:<{lengths[2]}}\t\t{header[3]:<{lengths[3]}}")  #https://stackoverflow.com/questions/8234445/python-format-output-string-right-alignment
-print (f"{table[1][0]:<{lengths[0]}}\t\t{table[1][1]:<{lengths[1]}}\t\t{table[1][2]:<{lengths[2]}}\t\t{table[1][3]:<{lengths[3]}}")
+print(f"{header[0]:<{lengths[0]}}\t{header[1]:<{lengths[1]}}\t\t{header[2]:<{lengths[2]}}\t\t{header[3]:<{lengths[3]}} | color=black")  
 print("---")
-for i in range(2,11):
-    print (f"{table[i][0]:<{lengths[0]}}\t\t{table[i][1]:<{lengths[1]}}\t\t{table[i][2]:<{lengths[2]}}\t\t{table[i][3]:<{lengths[3]}}") #https://realpython.com/python-f-strings/
+print (f"{table[0][0]:<{lengths[0]}}\t\t{table[0][1]:<{lengths[1]}}\t\t{table[0][2]:<{lengths[2]}}\t\t{table[0][3]:<{lengths[3]}} | color=black ")
+print("---")
+for i in range(1,11):
+    print (f"{table[i][0]:<{lengths[0]}}\t\t{table[i][1]:<{lengths[1]}}\t\t{table[i][2]:<{lengths[2]}}\t\t\t{table[i][3]:<{lengths[3]}}") 
 
+print("---")
+i = ind_target
+print (f"{table[i][0]:<{lengths[0]}}\t\t{table[i][1]:<{lengths[1]}}\t\t{table[i][2]:<{lengths[2]}}\t\t\t{table[i][3]:<{lengths[3]}}| color=orange")
