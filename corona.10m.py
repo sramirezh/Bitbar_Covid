@@ -1,5 +1,14 @@
 #!/Users/simon/opt/anaconda3/bin/python
 # -*- coding: utf-8 -*-
+
+# <bitbar.title>Covid-19</bitbar.title>
+# <bitbar.version>v1.0</bitbar.version>
+# <bitbar.author>Simon Ramirez Hinestrosa</bitbar.author>
+# <bitbar.author.github>your-github-username</bitbar.author.github>
+# <bitbar.desc>Tracks the covid-19 numbers from https://www.worldometers.info/coronavirus/</bitbar.desc>
+# <bitbar.image>http://www.hosted-somewhere/pluginimage</bitbar.image>
+# <bitbar.dependencies>python</bitbar.dependencies>
+# <bitbar.abouturl>http://url-to-about.com/</bitbar.abouturl>
 """
 Created on Sun Apr  5 11:51:27 2020
 
@@ -110,19 +119,20 @@ def longest_per_column(table, header):
 
 
 df = get_main_table('https://www.worldometers.info/coronavirus/')
-header = df.columns[:4]
+header =['Country,Other', 'TotalCases', 'NewCases', 'TotalDeaths']
 
 
 # Dummy column to sort
-df[header[1]] = df[header[1]].astype(str) # to be able to use next line
-df['sort_column'] = df[header[1]].str.replace(',','', regex=True)
+df['TotalCases'] = df['TotalCases'].astype(str) # to be able to use next line
+df['sort_column'] = df['TotalCases'].str.replace(',','', regex=True)
+
 
 # Drop rows with "Total:" in the first column
-index_total = df[ df[header[0]] == "Total:" ].index
-df.drop(index_total , inplace = True)
+#index_total = df[ df[header[1]] == "Total:" ].index
+#df.drop(index_total , inplace = True)
 
-index_empty = df[ df[header[0]] == " " ].index
-df.drop(index_empty , inplace = True)
+#index_empty = df[ df[header[0]] == " " ].index
+#df.drop(index_empty , inplace = True)
 
 
 table_continents = df.values[:6]
@@ -131,11 +141,15 @@ table = df.values[7:]
 
 
 #TODO df has twice the same table, check the tr_elements
+column_country = df.columns.get_loc('Country,Other')
+
 index = np.where(table == header[0])[0][0]  # The table repeats itself here
+index_total = np.where(table[:,column_country]=='Total:') # continents have that colum with "Total:"
+index = np.min(index_total)
 table = table[:index,:]
 table[:,-1] = table[:,-1].astype(float)
 
-df2 = pd.DataFrame(table)
+df2 = pd.DataFrame(table, columns = df.columns )
 df3 = pd.DataFrame(table_continents)
 
 
@@ -143,13 +157,12 @@ df3 = pd.DataFrame(table_continents)
 table = table[table[:,-1].argsort()][::-1]
 
 # Working on the top 10
-lengths = longest_per_column(table[:11,:4],header)
+lengths = longest_per_column(table[:11,1:5],header)
 
 # Target country to track
 
 target_country = 'Colombia'
-
-ind_target = np.where(table[:,0] == target_country)[0][0]
+ind_target = np.where(table[:,column_country] == target_country)[0][0]
 
 print ("\u001b[1m C-19\n") 
 print("---")
@@ -157,6 +170,9 @@ print("---")
 print(f"{header[0]:<{lengths[0]}}\t{header[1]:<{lengths[1]}}\t\t{header[2]:<{lengths[2]}}\t\t{header[3]:<{lengths[3]}} | color=black")  
 print("---")
 print (f"{table[0][0]:<{lengths[0]}}\t\t{table[0][1]:<{lengths[1]}}\t\t{table[0][2]:<{lengths[2]}}\t\t{table[0][3]:<{lengths[3]}} | color=black ")
+
+#print (f"{table_continents[0][0]:<{lengths[0]}}\t\t{table_continents[0][1]:<{lengths[1]}}\t\t{table_continents[0][2]:<{lengths[2]}}\t\t{table[0][3]:<{lengths[3]}} | color=black ")
+
 print("---")
 for i in range(1,11):
     print (f"{table[i][0]:<{lengths[0]}}\t\t{table[i][1]:<{lengths[1]}}\t\t{table[i][2]:<{lengths[2]}}\t\t\t{table[i][3]:<{lengths[3]}}") 
