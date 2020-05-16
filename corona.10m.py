@@ -127,14 +127,6 @@ df['TotalCases'] = df['TotalCases'].astype(str) # to be able to use next line
 df['sort_column'] = df['TotalCases'].str.replace(',','', regex=True)
 
 
-# Drop rows with "Total:" in the first column
-#index_total = df[ df[header[1]] == "Total:" ].index
-#df.drop(index_total , inplace = True)
-
-#index_empty = df[ df[header[0]] == " " ].index
-#df.drop(index_empty , inplace = True)
-
-
 table_continents = df.values[:6]
 table = df.values[7:]
 
@@ -149,20 +141,44 @@ index = np.min(index_total)
 table = table[:index,:]
 table[:,-1] = table[:,-1].astype(float)
 
-df2 = pd.DataFrame(table, columns = df.columns )
-df3 = pd.DataFrame(table_continents)
+df2 = pd.DataFrame(table, columns = df.columns ) # Table with countries
+df3 = pd.DataFrame(table_continents) # Table with continents
 
 
 # Sorting the table based on the total cases
-table = table[table[:,-1].argsort()][::-1]
+df2 = df2.sort_values('sort_column', ascending = False)
+
+# TODO make more pandas like after here
+table = df2[header].values
 
 # Working on the top 10
-lengths = longest_per_column(table[:11,1:5],header)
+lengths = longest_per_column(table[:11,:],header)
 
 # Target country to track
 
 target_country = 'Colombia'
-ind_target = np.where(table[:,column_country] == target_country)[0][0]
+ind_target = np.where(table[:,0] == target_country)[0][0]
+
+
+
+#print ("\u001b[1m C-19\n") 
+#print("---")
+## Getting the longest string 
+#print(f"{header[0]:<{lengths[0]}}\t{header[1]:<{lengths[1]}}\t\t{header[2]:<{lengths[2]}}\t\t{header[3]:<{lengths[3]}} | color=black")  
+#print("---")
+#print (f"{table[0][0]:<{lengths[0]}}\t\t{table[0][1]:<{lengths[1]}}\t\t{table[0][2]:<{lengths[2]}}\t\t{table[0][3]:<{lengths[3]}} | color=black ")
+#
+##print (f"{table_continents[0][0]:<{lengths[0]}}\t\t{table_continents[0][1]:<{lengths[1]}}\t\t{table_continents[0][2]:<{lengths[2]}}\t\t{table[0][3]:<{lengths[3]}} | color=black ")
+#
+#print("---")
+#for i in range(1,11):
+#    print (f"{table[i][0]:<{lengths[0]}}\t\t{table[i][1]:<{lengths[1]}}\t\t{table[i][2]:<{lengths[2]}}\t\t\t{table[i][3]:<{lengths[3]}}") 
+#
+#print("---")
+#i = ind_target
+#print (f"{table[i][0]:<{lengths[0]}}\t\t{table[i][1]:<{lengths[1]}}\t\t{table[i][2]:<{lengths[2]}}\t\t\t{table[i][3]:<{lengths[3]}}| color=orange")
+
+
 
 print ("\u001b[1m C-19\n") 
 print("---")
