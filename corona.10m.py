@@ -156,8 +156,10 @@ lengths = longest_per_column(table[:11,:],header)
 
 # Target country to track
 
-target_country = 'Colombia'
-ind_target = np.where(table[:,0] == target_country)[0][0]
+target_countries = ['Colombia', 'UK', 'Germany', 'Bulgaria']
+ind_target = []
+for country in target_countries:
+    ind_target.append(np.where(table[:,0] == country)[0][0])
 
 
 
@@ -194,5 +196,6 @@ for i in range(1,11):
     print (f"{table[i][0]:<{lengths[0]}}\t\t{table[i][1]:<{lengths[1]}}\t\t{table[i][2]:<{lengths[2]}}\t\t\t{table[i][3]:<{lengths[3]}}") 
 
 print("---")
-i = ind_target
-print (f"{table[i][0]:<{lengths[0]}}\t\t{table[i][1]:<{lengths[1]}}\t\t{table[i][2]:<{lengths[2]}}\t\t\t{table[i][3]:<{lengths[3]}}| color=orange")
+for i in ind_target:
+#i = ind_target
+    print (f"{table[i][0]:<{lengths[0]}}\t\t{table[i][1]:<{lengths[1]}}\t\t{table[i][2]:<{lengths[2]}}\t\t\t{table[i][3]:<{lengths[3]}}| color=orange")
